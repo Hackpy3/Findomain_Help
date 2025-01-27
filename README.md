@@ -135,7 +135,88 @@ Run the following to see all available options:
 ```bash
 findomain --help
 ```
+The output you shared indicates that Findomain is successfully querying various APIs to find subdomains for the target domain (`facebook.com`). However, if the tool appears stuck or not returning results, here are some possible reasons and solutions:
 
+---
+
+### **Possible Issues and Fixes**
+1. **API Keys Not Configured**:
+   Many APIs require valid keys to return results, especially for larger or well-known domains like `facebook.com`. 
+   - Ensure that you have configured API keys for the services that require them.
+   - Create a configuration file (`~/.config/findomain/config.toml`) and include your API keys. For example:
+     ```toml
+     virustotal_api_key = "YOUR_API_KEY"
+     securitytrails_api_key = "YOUR_API_KEY"
+     censys_api_key = "YOUR_API_ID:YOUR_API_SECRET"
+     ```
+
+2. **Network Connectivity Issues**:
+   Ensure you have an active internet connection and no firewalls or proxies are blocking the API requests.
+
+3. **Rate Limiting by APIs**:
+   Some APIs might throttle requests or block you temporarily if you exceed their rate limits.
+   - Use authenticated requests by setting up API keys.
+   - Avoid querying frequently in a short time frame.
+
+4. **Domain Restrictions**:
+   For large domains like `facebook.com`, some APIs might have restrictions or may not provide data.
+
+5. **Outdated Findomain Version**:
+   Ensure you're using the latest version of Findomain. Update it by:
+   - Re-downloading the binary from the [GitHub Releases](https://github.com/findomain/findomain/releases).
+   - If installed via `cargo`:
+     ```bash
+     cargo install findomain --force
+     ```
+
+6. **Timeouts or Errors from Specific APIs**:
+   Some APIs may be temporarily down or unresponsive. If Findomain hangs, you can disable specific APIs by running:
+   ```bash
+   findomain -t facebook.com --disable-certspotter --disable-archiveorg
+   ```
+
+---
+
+### **Debugging the Issue**
+1. Run Findomain with verbose output:
+   ```bash
+   findomain -t facebook.com --verbose
+   ```
+   This might provide more detailed logs about what's happening.
+
+2. Test individual APIs:
+   Use only one API at a time to isolate any problematic services. For example:
+   ```bash
+   findomain -t facebook.com --only-certspotter
+   ```
+
+---
+
+### **Alternative Subdomain Enumeration**
+If Findomain is still not returning results, consider using additional tools alongside it:
+
+1. **Amass**:
+   ```bash
+   amass enum -d facebook.com
+   ```
+
+2. **Subfinder**:
+   ```bash
+   subfinder -d facebook.com
+   ```
+
+3. **Combining Tools**:
+   Merge results from multiple tools:
+   ```bash
+   findomain -t facebook.com --stdout > findomain_results.txt
+   amass enum -d facebook.com -o amass_results.txt
+   subfinder -d facebook.com -o subfinder_results.txt
+   cat findomain_results.txt amass_results.txt subfinder_results.txt | sort -u > final_results.txt
+   ```
+
+---
+
+If you'd like, share any specific errors or behaviors, and I can guide you further!
 ---
 
 Let me know if you need help with any specific workflow!
